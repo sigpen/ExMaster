@@ -1,7 +1,9 @@
 from django.conf.urls import url
 
-from expenses import views
+from . import views
+
 
 urlpatterns = [
-    url(r'^$', views.list_expenses),
+    url(r'^$', views.ListExpensesView.as_view()),
+    url(r'^add/$', views.create_expense),
 ]
