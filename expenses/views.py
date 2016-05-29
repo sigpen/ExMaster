@@ -1,7 +1,10 @@
-from django.db.models import Sum
-from django.shortcuts import render, redirect
-from django.views.generic.list import ListView
+import datetime
+
 from django import forms
+from django.core.urlresolvers import reverse_lazy
+from django.db.models import Sum
+from django.views.generic.edit import CreateView, FormView
+from django.views.generic.list import ListView
 
 from . import models
 
@@ -13,22 +16,25 @@ class ListExpensesView(ListView):
         return self.get_queryset().aggregate(sum=Sum('amount'))['sum']
 
 
-class ExpenseForm(forms.Form):
-    date = forms.DateField()
-    amount = forms.DecimalField(max_digits=12, decimal_places=2)
-    title = forms.CharField(max_length=300)
+class CreateExpenseView(CreateView):
+    model = models.Expense
+    # form_class = ExpenseForm
+    fields = (
+        'amount',
+        'title',
+    )
+
+    success_url = reverse_lazy('list')
+
+    def form_valid(self, form):
+        form.instance.date = datetime.date.today()
+        return super().form_valid(form)
 
 
-def create_expense(request):
-    if request.method == "POST":
-        form = ExpenseForm(request.POST)
-        if form.is_valid():
-            o = models.Expense(**form.cleaned_data)
-            o.full_clean()
-            o.save()
-            return redirect("/")
-        assert False, ("NOT OK", form.errors)
-    form = ExpenseForm()
-    return render(request, "expenses/expense_form.html", {
-        'form': form,
-    })
+class LoginForm(forms.Form):
+    username = forms.CharField(max_length=300)
+    password = forms.CharField(max_length=300)
+
+
+
+

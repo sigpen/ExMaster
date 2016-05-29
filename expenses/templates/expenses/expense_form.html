@@ -1,10 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>form</title>
-</head>
-<body>
+<a href="{% url 'list' %}">Expenses</a>
+&gt;
+Add new expense...
+
+
 <form method="post">
     {% csrf_token %}
     <ul>
@@ -14,6 +12,3 @@
         </li>
     </ul>
 </form>
-
-</body>
-</html>
